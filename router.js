@@ -67,7 +67,7 @@ Router.post('/create/:modelName/', (req, res) => {
 
 /*
     Read route
-    Model type specified in URL. filter to search for said model are specified in request body.
+    Model type specified in URL. Filter to search for said model are specified in request body.
     Specify no parameters in request body to retrieve all models of that type
 */
 Router.get('/read/:modelName/', (req, res) => {
@@ -78,17 +78,28 @@ Router.get('/read/:modelName/', (req, res) => {
         .then(docs => {
             res.send(docs)
         })
+        .catch(err => {
+            res.sendStatus(500)
+            console.log(err)
+        })
 
 })
 
+/*
+    Update route
+    Model type specified in URL. Filter to search for and
+*/
 Router.post('/update/:modelName/', (req, res) => {
-    let model = getModelFromString(req.params.modelname)
+    let model = getModelFromString(req.params.modelName)
 
-    //use request body filter object as filter
-    model.find(req.body.filter)
-        .then(docs => {
-            //use req.body as update rules
-            model.updateMany(filter, req.body)
+    //use request body filter object as filter and update object as update query
+    model.updateMany(req.body.filter, req.body.update)
+        .then(response => {
+            res.json({ modified: response.nModified })
+        })
+        .catch(err => {
+            res.sendStatus(500)
+            console.log(err)
         })
 
 })
