@@ -87,7 +87,10 @@ Router.get('/read/:modelName/', (req, res) => {
 
 /*
     Update route
-    Model type specified in URL. Filter to search for and
+    Model type specified in URL. Filter to search for said model are specified in filter object of request body.
+    Fields to update model are specified in update object of request body.
+    If multiple models are found, they're all updated.
+    Responds with the number of documents updated.
 */
 Router.post('/update/:modelName/', (req, res) => {
     let model = getModelFromString(req.params.modelName)
@@ -102,6 +105,25 @@ Router.post('/update/:modelName/', (req, res) => {
             console.log(err)
         })
 
+})
+
+/*
+    Delete route
+    Model type specified in URL. Filter to search for said model are specified in request body.
+    If multiple documents fit the filter, they're all deleted.
+    Responds with the number of documents deleted.
+*/
+Router.delete('/delete/:modelName/', (req, res) => {
+    let model = getModelFromString(req.params.modelName)
+
+    model.deleteMany(req.body)
+        .then(response => {
+            res.json({ deleted: response.n })
+        })
+        .catch(err => {
+            res.sendStatus(500)
+            console.log(err)
+        })
 })
 
 Object.seal(Conductor)
