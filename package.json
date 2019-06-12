@@ -2,14 +2,13 @@
   "name": "conductor",
   "version": "1.0.0",
   "description": "A plug-able, custom router to automatically generate CRUD routes for ExpressJS apps using Mongoose and MongoDB.",
-  "main": "Router.js",
+  "main": "router.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sam Groover",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.17.1",
-    "mongoose": "^5.5.14"
+    "express": "^4.17.1"
   }
 }
