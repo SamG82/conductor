@@ -3,9 +3,28 @@ const mongoose = require('mongoose')
 
 const Router = express.Router()
 
-//Creating all of these here so that constant, redundant data isn't appended to them every time that they're needed
+//Creating these here so that constant, redundant data isn't appended to them every time that they're needed
 let models = []
 let modelPromises = []
+
+//Copy props from one object to another, useful for assigning model props from request body
+let copyProps = (from, to) => {
+    for (property in from) {
+        to[property] = from[property]
+    }
+}
+
+//return a model based on the model name and string provided
+let getModelFromString = (string) => {
+    let correctmodel = ''
+    models.forEach(model => {
+        if (model.modelName.toLowerCase() === string) {
+            correctmodel = model
+        }
+    })
+
+    return correctmodel
+}
 
 const Conductor = {
     applyModels: function (inputModels) {
@@ -37,57 +56,46 @@ Router.get('/', (req, res) => {
     Model type specified in URL. Values to create said model are specified in request body.
 */
 Router.post('/create/:modelName/', (req, res) => {
-    //get correct model type from name
-    models.forEach(model => {
-        if (model.modelName.toLowerCase() === req.params.modelName) {
-            let newDoc = new model()
-            for (property in req.body) {
-                newDoc[property] = req.body[property]
-            }
-            newDoc.save()
-            res.sendStatus(200)
-        }
-    })
+    let model = getModelFromString(req.params.modelName)
+    let newDoc = new model()
+
+    copyProps(req.body, newDoc)
+
+    newDoc.save()
+    res.sendStatus(200)
 })
 
 /*
     Read route
-    Model type specified in URL. Values to search for said model are specified in request body.
+    Model type specified in URL. Rules to search for said model are specified in request body.
     Specify no parameters in request body to retrieve all models of that type
 */
 Router.get('/read/:modelName/', (req, res) => {
-    //get correct model type from name
-    models.forEach(model => {
-        if (model.modelName.toLowerCase() === req.params.modelName) {
-            console.log(Object.keys(req.body).length)
-            if (Object.keys(req.body).length === 0) {
-                model.find({})
-                    .then(docs => {
-                        res.send(docs)
-                    })
-                    .catch(err => {
-                        res.sendStatus(500)
-                        console.log(err)
-                    })
-            }
+    let model = getModelFromString(req.params.modelName)
 
-            else {
-                rules = {}
+    let rules = {}
+    copyProps(req.body, rules)
 
-                //assign lookup rules from request body
-                for (property in req.body) {
-                    rules[property] = req.body[property]
-                }
+    if (Object.keys(req.body).length === 0) {
+        model.find({})
+            .then(docs => {
+                res.send(docs)
+            })
+    }
 
-                model.find(rules)
-                    .then(docs => {
-                        res.send(docs)
-                    })
-            }
-        }
-    })
+    else {
+        model.find(rules)
+            .then(docs => {
+                res.send(docs)
+            })
+    }
 })
 
 Object.seal(Conductor)
 
 module.exports = Conductor
+
+/*
+FINISH SETTING UP UPDATE ROUTE FUNCTIONALITY
+MAKE SURE THE FUNCTION GETRULES WORKS FOR OTHER SITUATIONS WHERE IT TRANSFERS PROPERTIES AS WELL
+*/
