@@ -24,6 +24,21 @@ const Conductor = {
     Router
 }
 
+
+/*
+    Home Route
+    Returns all supplied models
+*/
+Router.get('/', (req, res) => {
+    Promise.all(modelPromises)
+        .then(docs => {
+            res.send(docs)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+})
+
 Object.seal(Conductor)
 
 module.exports = Conductor
