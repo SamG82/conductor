@@ -67,16 +67,14 @@ Router.post('/create/:modelName/', (req, res) => {
 
 /*
     Read route
-    Model type specified in URL. Rules to search for said model are specified in request body.
+    Model type specified in URL. filter to search for said model are specified in request body.
     Specify no parameters in request body to retrieve all models of that type
 */
 Router.get('/read/:modelName/', (req, res) => {
     let model = getModelFromString(req.params.modelName)
 
-    let rules = {}
-    copyProps(req.body, rules)
-
-    model.find(rules)
+    //use request body content as filter
+    model.find(req.body)
         .then(docs => {
             res.send(docs)
         })
@@ -84,15 +82,17 @@ Router.get('/read/:modelName/', (req, res) => {
 })
 
 Router.post('/update/:modelName/', (req, res) => {
-    rules = {}
+    let model = getModelFromString(req.params.modelname)
+
+    //use request body filter object as filter
+    model.find(req.body.filter)
+        .then(docs => {
+            //use req.body as update rules
+            model.updateMany(filter, req.body)
+        })
 
 })
 
 Object.seal(Conductor)
 
 module.exports = Conductor
-
-/*
-FINISH SETTING UP UPDATE ROUTE FUNCTIONALITY
-MAKE SURE THE FUNCTION GETRULES WORKS FOR OTHER SITUATIONS WHERE IT TRANSFERS PROPERTIES AS WELL
-*/
