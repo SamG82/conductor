@@ -76,19 +76,16 @@ Router.get('/read/:modelName/', (req, res) => {
     let rules = {}
     copyProps(req.body, rules)
 
-    if (Object.keys(req.body).length === 0) {
-        model.find({})
-            .then(docs => {
-                res.send(docs)
-            })
-    }
+    model.find(rules)
+        .then(docs => {
+            res.send(docs)
+        })
 
-    else {
-        model.find(rules)
-            .then(docs => {
-                res.send(docs)
-            })
-    }
+})
+
+Router.post('/update/:modelName/', (req, res) => {
+    rules = {}
+
 })
 
 Object.seal(Conductor)
