@@ -32,6 +32,23 @@ Router.get('/', (req, res) => {
         })
 })
 
+/*
+    Create route
+    Model type specified in URL. Values to create said model are specified in request body.
+*/
+Router.post('/create/:modelName/', (req, res) => {
+    //get correct model type from name
+    models.forEach(model => {
+        if (model.modelName.toLowerCase() === req.params.modelName) {
+            let newDoc = new model()
+            for (property in req.body) {
+                newDoc[property] = req.body[property]
+            }
+            newDoc.save()
+            res.sendStatus(200)
+        }
+    })
+})
 
 Object.seal(Conductor)
 
