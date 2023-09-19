@@ -1,5 +1,5 @@
 # Conductor
-A plug-able, custom router to automatically generate CRUD routes for ExpressJS apps using Mongoose and MongoDB.
+A pluggable router to automatically generate CRUD routes for ExpressJS apps that use Mongoose/MongoDB.
 
 ## Usage
 First, install the package with npm. `npm i conductor-js`.
